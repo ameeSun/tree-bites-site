@@ -57,33 +57,6 @@ const Mission = () => {
             );
           })}
         </div>
-
-        {/* Stats Section */}
-        <div className="bg-card rounded-3xl p-8 md:p-12 shadow-lg animate-scale-in" style={{ animationDelay: "0.3s" }}>
-          <div className="text-center mb-8">
-            <h3 className="text-2xl font-bold mb-2">Our Impact So Far</h3>
-            <p className="text-muted-foreground">And we're just getting started</p>
-          </div>
-
-          <div className="grid md:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">200+</div>
-              <div className="text-sm text-muted-foreground">Pounds of Food Saved</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-accent mb-2">1000+</div>
-              <div className="text-sm text-muted-foreground">Students Fed</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-primary mb-2">50+</div>
-              <div className="text-sm text-muted-foreground">Campus Events</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-accent mb-2">15+</div>
-              <div className="text-sm text-muted-foreground">Partner Clubs</div>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
   );
