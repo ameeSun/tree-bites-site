@@ -8,7 +8,7 @@ const AppDemo = () => {
         <div className="text-center mb-16 animate-fade-in-up">
           <h2 className="text-4xl md:text-5xl font-bold mb-4">See It in Action</h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Students see your post instantly on their Food Bites map
+            Students see your post instantly on their Tree Bites map
           </p>
         </div>
 
@@ -32,7 +32,7 @@ const AppDemo = () => {
                       <div className="relative bg-background rounded-[2.5rem] overflow-hidden aspect-[9/19]">
                         <img 
                           src={appMockup} 
-                          alt="Food Bites app interface showing food locations on campus map" 
+                          alt="Tree Bites app interface showing food locations on campus map" 
                           className="w-full h-full object-cover"
                         />
                         
@@ -100,7 +100,7 @@ const AppDemo = () => {
 
                   <div className="pt-6 border-t border-border">
                     <p className="text-sm text-muted-foreground">
-                      Join <span className="font-semibold text-primary">50+ clubs</span> already using Food Bites to make an impact
+                      Join <span className="font-semibold text-primary">50+ clubs</span> already using Tree Bites to make an impact
                     </p>
                   </div>
                 </div>

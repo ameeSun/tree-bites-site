@@ -16,7 +16,7 @@ const steps = [
   {
     icon: Bell,
     title: "Notify students",
-    description: "The post appears instantly on the Food Bites map",
+    description: "The post appears instantly on the Tree Bites map",
     color: "text-primary"
   }
 ];

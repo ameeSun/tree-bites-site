@@ -9,10 +9,10 @@ const Footer = () => {
           <div className="text-center md:text-left">
             <div className="flex items-center gap-2 justify-center md:justify-start mb-2">
               <span className="text-2xl">🍕</span>
-              <span className="font-bold text-xl">Food Bites</span>
+              <span className="font-bold text-xl">Tree Bites</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              Built at Stanford 🌲 © 2025 Food Bites
+              Built at Stanford 🌲 © 2025 Tree Bites
             </p>
           </div>
 
@@ -56,7 +56,7 @@ const Footer = () => {
               <Instagram className="w-5 h-5" />
             </a>
             <a
-              href="mailto:hello@foodbites.app"
+              href="mailto:hello@treebites.app"
               className="w-10 h-10 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground transition-all flex items-center justify-center group"
               aria-label="Email"
             >

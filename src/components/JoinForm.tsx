@@ -118,7 +118,7 @@ const JoinForm = () => {
         <div className="text-center mb-12 animate-fade-in-up">
           <h2 className="text-4xl md:text-5xl font-bold mb-4">Join as a Club</h2>
           <p className="text-xl text-muted-foreground">
-            Get early access to Food Bites and start making an impact
+            Get early access to Tree Bites and start making an impact
           </p>
         </div>
 

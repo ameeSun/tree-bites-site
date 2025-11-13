@@ -34,7 +34,7 @@ const Mission = () => {
           </h2>
           <p className="text-xl text-muted-foreground leading-relaxed max-w-3xl mx-auto">
             Every week, Stanford events throw away hundreds of pounds of edible food. 
-            Food Bites connects that food to students before it's wasted — one photo at a time.
+            Tree Bites connects that food to students before it's wasted — one photo at a time.
           </p>
         </div>
 
