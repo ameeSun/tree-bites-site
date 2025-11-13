@@ -117,7 +117,7 @@ const FoodField = () => {
 
   return (
     <Canvas
-    camera={{ position: [0, 0, 7], fov: 75 }}
+      camera={{ position: [0, 0, 5] }}
       style={{ width: "100%", height: "100%", userSelect: 'none', WebkitUserSelect: 'none' }}
       gl={{ alpha: true }}
       className="pointer-events-auto select-none"
