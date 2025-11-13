@@ -5,15 +5,24 @@ import FloatingFood from "@/components/FloatingFood";
 
 // ✅ Guaranteed safe URLs for Vite + R3F
 const foods = [
-  new URL("@/assets/food/soup.png", import.meta.url).href,
-  new URL("@/assets/food/persimmon.png", import.meta.url).href,
+  new URL("@/assets/food/broccoli.png", import.meta.url).href,
+  new URL("@/assets/food/candy.png", import.meta.url).href,
+  new URL("@/assets/food/egg.png", import.meta.url).href,
+  new URL("@/assets/food/lemon.png", import.meta.url).href,
   new URL("@/assets/food/onigiri.png", import.meta.url).href,
+  new URL("@/assets/food/onion.png", import.meta.url).href,
+  new URL("@/assets/food/persimmon.png", import.meta.url).href,
+  new URL("@/assets/food/sashimi.png", import.meta.url).href,
+  new URL("@/assets/food/soup.png", import.meta.url).href,
+  new URL("@/assets/food/tomato.png", import.meta.url).href,
 ];
 
 const FoodParticles = () => {
+  // Load textures safely
   const textures = useLoader(TextureLoader, foods);
 
-  const particles = Array.from({ length: 12 }, (_, i) => ({
+  // Generate multiple floating items
+  const particles = Array.from({ length: 25 }, (_, i) => ({
     texture: textures[i % textures.length],
     index: i,
   }));
@@ -35,7 +44,7 @@ const FoodField = () => {
       gl={{ alpha: true }}
       className="pointer-events-none"
     >
-      {/* temporary background for visibility */}
+      {/* Temporary background for visibility */}
       <color attach="background" args={["#ffffff"]} />
 
       <Suspense fallback={null}>
