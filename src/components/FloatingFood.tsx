@@ -14,6 +14,7 @@ const FloatingFood = ({ texture, index }: FloatingFoodProps) => {
   const {
     baseX,
     baseY,
+    baseZ,
     floatSpeed,
     driftX,
     driftY,
@@ -22,6 +23,7 @@ const FloatingFood = ({ texture, index }: FloatingFoodProps) => {
     () => ({
       baseX: Math.random() * 8 - 4,
       baseY: Math.random() * 6 - 3,
+      baseZ: Math.random() * 0.4 - 0.2,
       floatSpeed: 0.001 + Math.random() * 0.0015,
       driftX: Math.random() * 0.002 - 0.001,
       driftY: Math.random() * 0.002 - 0.001,
@@ -37,25 +39,31 @@ const FloatingFood = ({ texture, index }: FloatingFoodProps) => {
     // time-based floating, smoother and more stable than Date.now()
     const t = clock.getElapsedTime();
 
-    // Smooth idle float
-    pos.x = baseX + Math.sin(t * 0.6 + index) * 0.3 + driftX;
-    pos.y = baseY + Math.cos(t * 0.4 + index) * 0.3 + driftY;
+    // Calculate base floating position with time-based drift
+    const floatX = baseX + Math.sin(t * 0.6 + index) * 0.3 + driftX * t;
+    const floatY = baseY + Math.cos(t * 0.4 + index) * 0.3 + driftY * t;
 
     // Mouse repel
-    const dx = mouse.x * 4 - pos.x;
-    const dy = mouse.y * 2 - pos.y;
+    const dx = mouse.x * 4 - floatX;
+    const dy = mouse.y * 2 - floatY;
     const dist = Math.sqrt(dx * dx + dy * dy);
-    if (dist < 1.2) {
-      pos.x -= dx * 0.03 * (1.2 - dist);
-      pos.y -= dy * 0.03 * (1.2 - dist);
+    
+    // Apply mouse repel if close enough, otherwise use float position
+    if (dist < 1.2 && dist > 0) {
+      const repelStrength = 0.03 * (1.2 - dist);
+      pos.x = floatX - dx * repelStrength;
+      pos.y = floatY - dy * repelStrength;
+    } else {
+      pos.x = floatX;
+      pos.y = floatY;
     }
 
-    // Subtle rotation
-    mesh.current.rotation.z += rotationSpeed * 0.5;
+    // Subtle rotation (bounded to prevent overflow)
+    mesh.current.rotation.z = (t * rotationSpeed * 0.5) % (Math.PI * 2);
   });
 
   return (
-    <mesh ref={mesh} position={[baseX, baseY, Math.random() * 0.4 - 0.2]}>
+    <mesh ref={mesh} position={[baseX, baseY, baseZ]}>
       <planeGeometry args={[0.8, 0.8]} />
       <meshBasicMaterial map={texture} transparent />
     </mesh>
