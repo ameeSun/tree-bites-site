@@ -14,9 +14,10 @@ interface FloatingFoodProps {
     dragCurrent: { x: number; y: number };
     dragDirection: { x: number; y: number };
   }>;
+  size: number;
 }
 
-const FloatingFood = ({ texture, index, initialPos, positionsRef, minDistance, mouseStateRef }: FloatingFoodProps) => {
+const FloatingFood = ({ texture, index, initialPos, positionsRef, minDistance, mouseStateRef, size }: FloatingFoodProps) => {
   const mesh = useRef<THREE.Mesh>(null!);
   const velocity = useRef({ x: 0, y: 0 });
   const targetPos = useRef({ x: initialPos.x, y: initialPos.y });
@@ -146,7 +147,7 @@ const FloatingFood = ({ texture, index, initialPos, positionsRef, minDistance, m
 
   return (
     <mesh ref={mesh} position={[baseX, baseY, baseZ]}>
-      <planeGeometry args={[0.8, 0.8]} />
+      <planeGeometry args={[size, size]} />
       <meshBasicMaterial 
         map={texture} 
         transparent 

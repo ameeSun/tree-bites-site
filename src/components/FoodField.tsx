@@ -1,5 +1,5 @@
-import { Canvas, useLoader } from "@react-three/fiber";
-import { Suspense, useRef, useMemo } from "react";
+import { Canvas, useLoader, useThree } from "@react-three/fiber";
+import { Suspense, useRef, useMemo, useEffect } from "react";
 import { TextureLoader } from "three";
 import FloatingFood from "@/components/FloatingFood";
 
@@ -20,41 +20,54 @@ const foods = [
 const MIN_DISTANCE = 0.6; // Minimum distance between food items in pile
 
 // Generate positions spread across the bottom of the screen with more at edges
+// Avoids center area where text is displayed
 const generateBottomPositions = (count: number) => {
   const positions: Array<{ x: number; y: number; z: number }> = [];
   const bottomY = -2.5; // Bottom of screen in 3D space
   const spreadWidth = 8; // Width to spread items across
-  const edgeWidth = 1.5; // Width of edge clusters
+  const edgeWidth = 2.5; // Wider edge clusters for corners
+  const centerAvoidance = 2.0; // Width of center area to avoid (where text is)
   
-  // Allocate items: some at left edge, some at right edge, rest in middle
-  const leftEdgeCount = Math.floor(count * 0.25); // 25% at left edge
-  const rightEdgeCount = Math.floor(count * 0.25); // 25% at right edge
-  const middleCount = count - leftEdgeCount - rightEdgeCount; // Rest in middle
+  // Allocate items: more at left edge, more at right edge, fewer in middle
+  const leftEdgeCount = Math.floor(count * 0.25); // 45% at left edge/corner
+  const rightEdgeCount = Math.floor(count * 0.25); // 45% at right edge/corner
+  const middleCount = count - leftEdgeCount - rightEdgeCount; // Rest in middle (but avoiding center)
   
-  // Left edge positions
+  // Left edge/corner positions - push towards far left
   for (let i = 0; i < leftEdgeCount; i++) {
-    const x = -spreadWidth / 2 - edgeWidth / 2 + Math.random() * edgeWidth;
-    const y = bottomY + Math.random() * 0.3;
-    const z = (Math.random() - 0.5) * 0.4;
+    // Push further left and spread vertically for corner effect
+    const x = -spreadWidth / 2 - edgeWidth / 2 - Math.random() * edgeWidth * 0.5;
+    const y = bottomY + Math.random() * 0.4; // More vertical spread
+    const z = (Math.random() - 0.5) * 0.5;
     positions.push({ x, y, z });
   }
   
-  // Middle positions
-  const middleWidth = spreadWidth - edgeWidth;
+  // Middle positions - but avoiding center area
+  const middleWidth = spreadWidth - centerAvoidance; // Exclude center
   const middleSpacing = middleCount > 1 ? middleWidth / (middleCount - 1) : 0;
   for (let i = 0; i < middleCount; i++) {
-    const baseX = -middleWidth / 2 + (i * middleSpacing);
-    const x = baseX + (Math.random() - 0.5) * 0.3;
+    // Split middle into left-middle and right-middle, avoiding center
+    const halfMiddle = middleCount / 2;
+    let baseX;
+    if (i < halfMiddle) {
+      // Left side of middle (but not center)
+      baseX = -middleWidth / 2 + (i * middleSpacing);
+    } else {
+      // Right side of middle (but not center)
+      baseX = centerAvoidance / 2 + ((i - halfMiddle) * middleSpacing);
+    }
+    const x = baseX + (Math.random() - 0.5) * 0.2;
     const y = bottomY + Math.random() * 0.2;
     const z = (Math.random() - 0.5) * 0.4;
     positions.push({ x, y, z });
   }
   
-  // Right edge positions
+  // Right edge/corner positions - push towards far right
   for (let i = 0; i < rightEdgeCount; i++) {
-    const x = spreadWidth / 2 - edgeWidth / 2 + Math.random() * edgeWidth;
-    const y = bottomY + Math.random() * 0.3;
-    const z = (Math.random() - 0.5) * 0.4;
+    // Push further right and spread vertically for corner effect
+    const x = spreadWidth / 2 + edgeWidth / 2 + Math.random() * edgeWidth * 0.5;
+    const y = bottomY + Math.random() * 0.4; // More vertical spread
+    const z = (Math.random() - 0.5) * 0.5;
     positions.push({ x, y, z });
   }
 
@@ -70,9 +83,45 @@ interface FoodParticlesProps {
   }>;
 }
 
+// Camera controller component to make camera dynamic
+const CameraController = () => {
+  const { camera, size } = useThree();
+  
+  useEffect(() => {
+    // Set camera position to show full screen
+    // Calculate appropriate Z distance based on FOV and screen size
+    const fov = 75; // degrees
+    const fovRad = (fov * Math.PI) / 180;
+    const aspect = size.width / size.height;
+    
+    // Calculate distance to show full screen
+    // visibleHeight = 2 * tan(fov/2) * distance
+    // We want to show the full screen, so set distance appropriately
+    const visibleHeight = 10; // Desired visible height in world units
+    const distance = visibleHeight / (2 * Math.tan(fovRad / 2));
+    
+    camera.position.set(0, 0, distance);
+    
+    // Type guard to ensure it's a PerspectiveCamera
+    if ('fov' in camera && 'aspect' in camera) {
+      (camera as THREE.PerspectiveCamera).fov = fov;
+      (camera as THREE.PerspectiveCamera).aspect = aspect;
+      camera.updateProjectionMatrix();
+    }
+  }, [camera, size.width, size.height]);
+  
+  return null;
+};
+
 const FoodParticles = ({ mouseStateRef }: FoodParticlesProps) => {
   // Load textures safely
   const textures = useLoader(TextureLoader, foods);
+  const { size: viewportSize } = useThree();
+  
+  // Calculate dynamic size based on screen dimensions
+  // Base size scales with viewport height, with minimum and maximum bounds
+  // Larger screens get bigger images, smaller screens get appropriately sized images
+  const baseSize = Math.max(0.5, Math.min(1.2, viewportSize.height * 0.08));
   
   // Shared ref to track all positions for collision detection
   const positionsRef = useRef<Map<number, { x: number; y: number }>>(new Map());
@@ -84,7 +133,7 @@ const FoodParticles = ({ mouseStateRef }: FoodParticlesProps) => {
   );
 
   // Generate multiple floating items
-  const particles = Array.from({ length: 25 }, (_, i) => ({
+  const particles = Array.from({ length: 30 }, (_, i) => ({
     texture: textures[i % textures.length],
     index: i,
     initialPos: initialPositions[i],
@@ -101,6 +150,7 @@ const FoodParticles = ({ mouseStateRef }: FoodParticlesProps) => {
           positionsRef={positionsRef}
           minDistance={MIN_DISTANCE}
           mouseStateRef={mouseStateRef}
+          size={baseSize}
         />
       ))}
     </>
@@ -117,7 +167,7 @@ const FoodField = () => {
 
   return (
     <Canvas
-      camera={{ position: [0, 0, 5] }}
+      camera={{ fov: 75, position: [0, 0, 7] }}
       style={{ width: "100%", height: "100%", userSelect: 'none', WebkitUserSelect: 'none' }}
       gl={{ alpha: true }}
       className="pointer-events-auto select-none"
@@ -131,12 +181,13 @@ const FoodField = () => {
         const mouseY = -((e.clientY - rect.top) / rect.height) * 2 + 1;
         
         // Convert to 3D world space coordinates
-        // Camera is at z=5, looking at origin, with FOV that shows roughly -4 to 4 in X
-        // Using aspect ratio and camera distance to calculate proper world coordinates
+        // Using dynamic camera settings (FOV 75, calculated distance)
         const aspect = rect.width / rect.height;
-        const fov = 50; // degrees (default R3F camera FOV)
-        const distance = 5; // camera z position
-        const worldHeight = 2 * Math.tan((fov * Math.PI / 180) / 2) * distance;
+        const fov = 75; // degrees (matches CameraController)
+        const fovRad = (fov * Math.PI) / 180;
+        const visibleHeight = 10; // matches CameraController
+        const distance = visibleHeight / (2 * Math.tan(fovRad / 2));
+        const worldHeight = 2 * Math.tan(fovRad / 2) * distance;
         const worldWidth = worldHeight * aspect;
         
         const worldX = (mouseX * worldWidth) / 2;
@@ -156,10 +207,13 @@ const FoodField = () => {
           const mouseY = -((e.clientY - rect.top) / rect.height) * 2 + 1;
           
           // Convert to 3D world space coordinates
+          // Using dynamic camera settings (FOV 75, calculated distance)
           const aspect = rect.width / rect.height;
-          const fov = 50;
-          const distance = 5;
-          const worldHeight = 2 * Math.tan((fov * Math.PI / 180) / 2) * distance;
+          const fov = 75; // degrees (matches CameraController)
+          const fovRad = (fov * Math.PI) / 180;
+          const visibleHeight = 10; // matches CameraController
+          const distance = visibleHeight / (2 * Math.tan(fovRad / 2));
+          const worldHeight = 2 * Math.tan(fovRad / 2) * distance;
           const worldWidth = worldHeight * aspect;
           
           const worldX = (mouseX * worldWidth) / 2;
@@ -186,6 +240,7 @@ const FoodField = () => {
         mouseStateRef.current.dragDirection = { x: 0, y: 0 };
       }}
     >
+      <CameraController />
       <Suspense fallback={null}>
         <FoodParticles mouseStateRef={mouseStateRef} />
       </Suspense>
