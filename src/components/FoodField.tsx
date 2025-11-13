@@ -2,17 +2,18 @@ import { Canvas, useLoader } from "@react-three/fiber";
 import { Suspense } from "react";
 import { TextureLoader } from "three";
 import FloatingFood from "@/components/FloatingFood";
-import soup from "@/assets/food/soup.png";
-import persimmon from "@/assets/food/persimmon.png";
-import onigiri from "@/assets/food/onigiri.png";
 
-const foods = [soup, persimmon, onigiri];
+// ✅ Guaranteed safe URLs for Vite + R3F
+const foods = [
+  new URL("@/assets/food/soup.png", import.meta.url).href,
+  new URL("@/assets/food/persimmon.png", import.meta.url).href,
+  new URL("@/assets/food/onigiri.png", import.meta.url).href,
+];
 
 const FoodParticles = () => {
-  // useLoader properly handles async texture loading with Suspense
   const textures = useLoader(TextureLoader, foods);
 
-  const particles = Array.from({ length: 9 }, (_, i) => ({
+  const particles = Array.from({ length: 12 }, (_, i) => ({
     texture: textures[i % textures.length],
     index: i,
   }));
@@ -34,6 +35,9 @@ const FoodField = () => {
       gl={{ alpha: true }}
       className="pointer-events-none"
     >
+      {/* temporary background for visibility */}
+      <color attach="background" args={["#ffffff"]} />
+
       <Suspense fallback={null}>
         <FoodParticles />
       </Suspense>
