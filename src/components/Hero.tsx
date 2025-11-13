@@ -19,7 +19,7 @@ const Hero = () => {
       </div>
 
       {/* Centered Content */}
-      <div className="container relative z-10 px-6 py-20">
+      <div className="container relative z-10 px-6 py-20 pointer-events-none">
         <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
           <div className="space-y-8 animate-fade-in-up">
             <span className="inline-block px-4 py-2 rounded-full bg-[#2FB16A]/10 text-[#2FB16A] text-sm font-semibold">
@@ -37,7 +37,7 @@ const Hero = () => {
               meal at a time.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center pointer-events-auto">
               <Button
                 variant="hero"
                 size="lg"

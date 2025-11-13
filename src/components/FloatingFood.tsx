@@ -8,26 +8,28 @@ interface FloatingFoodProps {
   initialPos: { x: number; y: number; z: number };
   positionsRef: React.MutableRefObject<Map<number, { x: number; y: number }>>;
   minDistance: number;
+  mouseStateRef: React.MutableRefObject<{
+    isDown: boolean;
+    dragStart: { x: number; y: number };
+    dragCurrent: { x: number; y: number };
+    dragDirection: { x: number; y: number };
+  }>;
 }
 
-const FloatingFood = ({ texture, index, initialPos, positionsRef, minDistance }: FloatingFoodProps) => {
+const FloatingFood = ({ texture, index, initialPos, positionsRef, minDistance, mouseStateRef }: FloatingFoodProps) => {
   const mesh = useRef<THREE.Mesh>(null!);
+  const velocity = useRef({ x: 0, y: 0 });
+  const targetPos = useRef({ x: initialPos.x, y: initialPos.y });
 
   const {
     baseX,
     baseY,
     baseZ,
-    floatSpeed,
-    driftX,
-    driftY,
     rotationSpeed,
   } = useMemo(() => ({
     baseX: initialPos.x,
     baseY: initialPos.y,
     baseZ: initialPos.z,
-    floatSpeed: 0.001 + Math.random() * 0.0015,
-    driftX: Math.random() * 0.002 - 0.001,
-    driftY: Math.random() * 0.002 - 0.001,
     rotationSpeed: 0.002 + Math.random() * 0.002,
   }), [initialPos]);
 
@@ -39,24 +41,65 @@ const FloatingFood = ({ texture, index, initialPos, positionsRef, minDistance }:
     };
   }, [index, baseX, baseY, positionsRef]);
 
-  useFrame(({ mouse, clock }) => {
+  useFrame(() => {
     if (!mesh.current) return;
     const pos = mesh.current.position;
-    const t = clock.getElapsedTime();
 
-    // Gentle idle float with independent drift
-    let floatX = baseX + Math.sin(t * 0.6 + index) * 0.3 + driftX * t;
-    let floatY = baseY + Math.cos(t * 0.4 + index) * 0.3 + driftY * t;
+    // Current position
+    let currentX = pos.x;
+    let currentY = pos.y;
 
-    // Subtle repel from cursor
-    const mouseDx = mouse.x * 4 - floatX;
-    const mouseDy = mouse.y * 2 - floatY;
-    const mouseDist = Math.sqrt(mouseDx * mouseDx + mouseDy * mouseDy);
-    if (mouseDist < 1.2 && mouseDist > 0) {
-      const repelStrength = 0.03 * (1.2 - mouseDist);
-      floatX -= mouseDx * repelStrength;
-      floatY -= mouseDy * repelStrength;
+    // Only interact when mouse is down (clicking/dragging)
+    if (mouseStateRef.current.isDown) {
+      const mouseX = mouseStateRef.current.dragCurrent.x;
+      const mouseY = mouseStateRef.current.dragCurrent.y;
+      const dragDir = mouseStateRef.current.dragDirection;
+      
+      // Distance from food item to mouse
+      const mouseDx = mouseX - currentX;
+      const mouseDy = mouseY - currentY;
+      const mouseDist = Math.sqrt(mouseDx * mouseDx + mouseDy * mouseDy);
+      
+      // Expanded interaction radius (larger area)
+      const interactionRadius = 2.0;
+      
+      // Only affect items near the mouse
+      if (mouseDist < interactionRadius && mouseDist > 0) {
+        // Calculate push strength based on distance (stronger closer to mouse)
+        const pushStrength = (interactionRadius - mouseDist) / interactionRadius;
+        
+        // Calculate drag speed (capped to prevent excessive force)
+        const dragSpeed = Math.min(
+          Math.sqrt(dragDir.x * dragDir.x + dragDir.y * dragDir.y),
+          2.0 // Max drag speed
+        );
+        
+        // Normalize drag direction
+        const dragLength = Math.sqrt(dragDir.x * dragDir.x + dragDir.y * dragDir.y);
+        if (dragLength > 0) {
+          const normalizedDrag = {
+            x: dragDir.x / dragLength,
+            y: dragDir.y / dragLength
+          };
+          
+          // Push items in the drag direction (gentler force)
+          const pushForce = pushStrength * dragSpeed * 0.12;
+          velocity.current.x += normalizedDrag.x * pushForce;
+          velocity.current.y += normalizedDrag.y * pushForce;
+        }
+      }
     }
+
+    // Apply velocity to position (with max velocity limit)
+    const maxVelocity = 0.5; // Limit maximum velocity to prevent items from being flung too far
+    const velMagnitude = Math.sqrt(velocity.current.x * velocity.current.x + velocity.current.y * velocity.current.y);
+    if (velMagnitude > maxVelocity) {
+      velocity.current.x = (velocity.current.x / velMagnitude) * maxVelocity;
+      velocity.current.y = (velocity.current.y / velMagnitude) * maxVelocity;
+    }
+    
+    currentX += velocity.current.x;
+    currentY += velocity.current.y;
 
     // Collision avoidance with other food items
     let avoidX = 0;
@@ -64,27 +107,41 @@ const FloatingFood = ({ texture, index, initialPos, positionsRef, minDistance }:
     positionsRef.current.forEach((otherPos, otherIndex) => {
       if (otherIndex === index) return;
       
-      const dx = floatX - otherPos.x;
-      const dy = floatY - otherPos.y;
+      const dx = currentX - otherPos.x;
+      const dy = currentY - otherPos.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
       
       if (dist < minDistance && dist > 0) {
-        // Push away from overlapping item
+        // Push away from overlapping item (smoother)
         const pushStrength = (minDistance - dist) / minDistance;
-        avoidX += (dx / dist) * pushStrength * 0.1;
-        avoidY += (dy / dist) * pushStrength * 0.1;
+        avoidX += (dx / dist) * pushStrength * 0.15;
+        avoidY += (dy / dist) * pushStrength * 0.15;
+        
+        // Transfer some velocity on collision (gentler)
+        const transfer = 0.05;
+        velocity.current.x += (dx / dist) * pushStrength * transfer;
+        velocity.current.y += (dy / dist) * pushStrength * transfer;
       }
     });
 
-    // Apply final position with collision avoidance
-    pos.x = floatX + avoidX;
-    pos.y = floatY + avoidY;
+    // Calculate target position
+    targetPos.current.x = currentX + avoidX;
+    targetPos.current.y = currentY + avoidY;
+
+    // Smooth interpolation (lerp) to target position for jitter-free motion
+    const lerpFactor = 0.15; // Higher = faster, lower = smoother
+    pos.x = pos.x + (targetPos.current.x - pos.x) * lerpFactor;
+    pos.y = pos.y + (targetPos.current.y - pos.y) * lerpFactor;
+
+    // Dampen velocity (friction) - smoother decay
+    velocity.current.x *= 0.97;
+    velocity.current.y *= 0.97;
 
     // Update shared position for next frame
     positionsRef.current.set(index, { x: pos.x, y: pos.y });
 
-    // Gentle rotation
-    mesh.current.rotation.z = (t * rotationSpeed * 0.5) % (Math.PI * 2);
+    // Gentle, constant rotation (not based on velocity)
+    mesh.current.rotation.z += rotationSpeed * 0.3;
   });
 
   return (

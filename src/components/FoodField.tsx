@@ -17,55 +17,49 @@ const foods = [
   new URL("@/assets/food/tomato.png", import.meta.url).href,
 ];
 
-const MIN_DISTANCE = 1.2; // Minimum distance between food items
+const MIN_DISTANCE = 0.6; // Minimum distance between food items in pile
 
-// Generate non-overlapping initial positions
-const generateNonOverlappingPositions = (count: number) => {
+// Generate positions spread across the bottom of the screen
+const generateBottomPositions = (count: number) => {
   const positions: Array<{ x: number; y: number; z: number }> = [];
-  const maxAttempts = 100;
-
-  const edgeBias = (range: number) => {
-    const r = Math.random() * 2 - 1;
-    return Math.sign(r) * (Math.pow(Math.abs(r), 0.4) * range);
-  };
-
+  const bottomY = -2.5; // Bottom of screen in 3D space
+  const spreadWidth = 8; // Width to spread items across
+  
+  // Calculate spacing to evenly distribute items
+  const spacing = spreadWidth / (count - 1);
+  
   for (let i = 0; i < count; i++) {
-    let attempts = 0;
-    let valid = false;
-    let x = 0, y = 0, z = 0;
-
-    while (!valid && attempts < maxAttempts) {
-      x = edgeBias(5);
-      y = edgeBias(3);
-      z = Math.random() * 0.4 - 0.2;
-
-      // Check collision with existing positions
-      valid = positions.every(pos => {
-        const dx = x - pos.x;
-        const dy = y - pos.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        return dist >= MIN_DISTANCE;
-      });
-
-      attempts++;
-    }
-
+    // Evenly distribute across the width with some random variation
+    const baseX = -spreadWidth / 2 + (i * spacing);
+    const x = baseX + (Math.random() - 0.5) * 0.3; // Small random offset
+    const y = bottomY + Math.random() * 0.2; // Slight vertical variation
+    const z = (Math.random() - 0.5) * 0.4;
+    
     positions.push({ x, y, z });
   }
 
   return positions;
 };
 
-const FoodParticles = () => {
+interface FoodParticlesProps {
+  mouseStateRef: React.MutableRefObject<{
+    isDown: boolean;
+    dragStart: { x: number; y: number };
+    dragCurrent: { x: number; y: number };
+    dragDirection: { x: number; y: number };
+  }>;
+}
+
+const FoodParticles = ({ mouseStateRef }: FoodParticlesProps) => {
   // Load textures safely
   const textures = useLoader(TextureLoader, foods);
   
   // Shared ref to track all positions for collision detection
   const positionsRef = useRef<Map<number, { x: number; y: number }>>(new Map());
 
-  // Generate non-overlapping initial positions
+  // Generate initial positions spread across the bottom
   const initialPositions = useMemo(
-    () => generateNonOverlappingPositions(25),
+    () => generateBottomPositions(25),
     []
   );
 
@@ -86,6 +80,7 @@ const FoodParticles = () => {
           initialPos={p.initialPos}
           positionsRef={positionsRef}
           minDistance={MIN_DISTANCE}
+          mouseStateRef={mouseStateRef}
         />
       ))}
     </>
@@ -93,16 +88,60 @@ const FoodParticles = () => {
 };
 
 const FoodField = () => {
+  const mouseStateRef = useRef({
+    isDown: false,
+    dragStart: { x: 0, y: 0 },
+    dragCurrent: { x: 0, y: 0 },
+    dragDirection: { x: 0, y: 0 }
+  });
+
   return (
     <Canvas
       camera={{ position: [0, 0, 5] }}
-      style={{ width: "100%", height: "100%" }}
+      style={{ width: "100%", height: "100%", userSelect: 'none', WebkitUserSelect: 'none' }}
       gl={{ alpha: true }}
-      className="pointer-events-none"
+      className="pointer-events-auto select-none"
+      onPointerDown={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        (e.target as HTMLElement).setPointerCapture(e.pointerId);
+        const rect = e.currentTarget.getBoundingClientRect();
+        const mouseX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        const mouseY = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+        mouseStateRef.current.isDown = true;
+        mouseStateRef.current.dragStart = { x: mouseX * 4, y: mouseY * 2 };
+        mouseStateRef.current.dragCurrent = { x: mouseX * 4, y: mouseY * 2 };
+        mouseStateRef.current.dragDirection = { x: 0, y: 0 };
+      }}
+      onPointerMove={(e) => {
+        if (mouseStateRef.current.isDown) {
+          e.preventDefault();
+          const rect = e.currentTarget.getBoundingClientRect();
+          const mouseX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+          const mouseY = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+          mouseStateRef.current.dragCurrent = { x: mouseX * 4, y: mouseY * 2 };
+          // Calculate drag direction
+          mouseStateRef.current.dragDirection = {
+            x: mouseStateRef.current.dragCurrent.x - mouseStateRef.current.dragStart.x,
+            y: mouseStateRef.current.dragCurrent.y - mouseStateRef.current.dragStart.y
+          };
+        }
+      }}
+      onPointerUp={(e) => {
+        e.preventDefault();
+        (e.target as HTMLElement).releasePointerCapture(e.pointerId);
+        mouseStateRef.current.isDown = false;
+        mouseStateRef.current.dragDirection = { x: 0, y: 0 };
+      }}
+      onPointerCancel={(e) => {
+        e.preventDefault();
+        (e.target as HTMLElement).releasePointerCapture(e.pointerId);
+        mouseStateRef.current.isDown = false;
+        mouseStateRef.current.dragDirection = { x: 0, y: 0 };
+      }}
     >
-
       <Suspense fallback={null}>
-        <FoodParticles />
+        <FoodParticles mouseStateRef={mouseStateRef} />
       </Suspense>
     </Canvas>
   );
