@@ -107,9 +107,30 @@ const Hero = () => {
             </div>
           </div>
 
-          {/* Right: Interactive Food Cloud */}
-          <div className="relative w-full h-[500px] rounded-3xl shadow-2xl overflow-hidden bg-white/40 backdrop-blur-lg">
-            <FoodField />
+          {/* Right Column - Image */}
+          <div
+            className="relative animate-scale-in"
+            style={{ animationDelay: "0.2s" }}
+          >
+            <div className="relative rounded-3xl overflow-hidden shadow-2xl">
+              <img
+                src={heroImage}
+                alt="Students sharing food after a Stanford event"
+                className="w-full h-auto object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-white/60 to-transparent" />
+            </div>
+
+            {/* Floating Emojis */}
+            <div className="absolute -top-6 -right-6 bg-card p-4 rounded-2xl shadow-lg animate-float transition-transform hover:-translate-y-2 hover:shadow-xl">
+              <div className="text-4xl">🍕</div>
+            </div>
+            <div
+              className="absolute -bottom-6 -left-6 bg-card p-4 rounded-2xl shadow-lg animate-float transition-transform hover:-translate-y-2 hover:shadow-xl"
+              style={{ animationDelay: "1s" }}
+            >
+              <div className="text-4xl">🥗</div>
+            </div>
           </div>
         </div>
       </div>
