@@ -1,5 +1,27 @@
-import { Smartphone } from "lucide-react";
 import appMockup from "@/assets/app-mockup.png";
+
+const features = [
+  {
+    icon: "📸",
+    title: "Instant Upload",
+    description: "Photos appear on the map within seconds"
+  },
+  {
+    icon: "📍",
+    title: "Location-Based",
+    description: "Students find food near them instantly"
+  },
+  {
+    icon: "🔔",
+    title: "Push Notifications",
+    description: "Nearby students get notified immediately"
+  },
+  {
+    icon: "⏱️",
+    title: "Real-Time Updates",
+    description: "Food availability updates live"
+  }
+];
 
 const AppDemo = () => {
   return (
@@ -39,7 +61,6 @@ const AppDemo = () => {
                         {/* Overlay Animation */}
                         <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" aria-hidden="true">
                           <span className="block w-20 h-20 rounded-full bg-primary/20 animate-ping origin-center" />
-                          {/* <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 block w-4 h-4 rounded-full bg-primary" /> */}
                         </div>
                       </div>
                     </div>
@@ -60,45 +81,17 @@ const AppDemo = () => {
                 {/* Right - Features List */}
                 <div className="space-y-6 animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
                   <div className="space-y-4">
-                    <div className="flex items-start gap-4">
-                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-1">
-                        <span className="text-xl">📸</span>
+                    {features.map((feature) => (
+                      <div key={feature.title} className="flex items-start gap-4">
+                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-1">
+                          <span className="text-xl">{feature.icon}</span>
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-lg mb-1">{feature.title}</h3>
+                          <p className="text-muted-foreground">{feature.description}</p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-semibold text-lg mb-1">Instant Upload</h3>
-                        <p className="text-muted-foreground">Photos appear on the map within seconds</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-4">
-                      <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center shrink-0 mt-1">
-                        <span className="text-xl">📍</span>
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-lg mb-1">Location-Based</h3>
-                        <p className="text-muted-foreground">Students find food near them instantly</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-4">
-                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-1">
-                        <span className="text-xl">🔔</span>
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-lg mb-1">Push Notifications</h3>
-                        <p className="text-muted-foreground">Nearby students get notified immediately</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-4">
-                      <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center shrink-0 mt-1">
-                        <span className="text-xl">⏱️</span>
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-lg mb-1">Real-Time Updates</h3>
-                        <p className="text-muted-foreground">Food availability updates live</p>
-                      </div>
-                    </div>
+                    ))}
                   </div>
 
                   <div className="pt-6 border-t border-border">

@@ -14,7 +14,10 @@ const Hero = () => {
   // Parallax transforms for content
   const contentY = useTransform(scrollYProgress, [0, 1], [0, -100]);
   const contentOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-  const contentScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.8]);
+  const contentScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.85]);
+  const gradientY = useTransform(scrollYProgress, [0, 1], [0, 160]);
+  const fieldY = useTransform(scrollYProgress, [0, 1], [0, 80]);
+  const treeGlowOpacity = useTransform(scrollYProgress, [0, 0.7], [0.5, 0]);
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -27,15 +30,30 @@ const Hero = () => {
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
       {/* Red gradient from top to bottom */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#8C1515]/20 via-[#8C1515]/10 to-transparent z-0" />
+      <motion.div
+        style={{ y: gradientY }}
+        className="absolute inset-0 bg-gradient-to-b from-[#8C1515]/25 via-[#8C1515]/15 to-transparent z-0"
+      />
       
       {/* Soft gradient backdrop - behind food images */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#8C1515]/5 via-transparent to-[#2FB16A]/5 z-[0.5]" />
+      <motion.div
+        style={{ y: gradientY }}
+        className="absolute inset-0 bg-gradient-to-br from-[#8C1515]/6 via-transparent to-[#2FB16A]/6 z-[0.5]"
+      />
 
       {/* Floating Food Images Background */}
-      <div className="absolute inset-0 z-[1]">
+      <motion.div
+        style={{ y: fieldY }}
+        className="absolute inset-0 z-[1]"
+      >
         <FoodField />
-      </div>
+      </motion.div>
+
+      {/* Tree glow behind heading */}
+      <motion.div
+        style={{ opacity: treeGlowOpacity, scale: contentScale }}
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[28rem] h-[28rem] rounded-full bg-emerald-500/10 blur-3xl z-[2]"
+      />
 
       {/* Centered Content with scroll animations */}
       <motion.div 
@@ -57,13 +75,15 @@ const Hero = () => {
               🌲 Built at Stanford
             </span>
 
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
-              Find free food. <br />
-              <span className="text-[#8C1515]">End campus waste.</span>
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold leading-tight text-emerald-900 drop-shadow-sm">
+              Tree Bites
             </h1>
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold tracking-tight">
+              Find free food. <span className="text-[#8C1515]">End campus waste.</span>
+            </h2>
 
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Tree Bites connects Stanford clubs and students to share leftover
+              <strong className="font-semibold text-foreground">Tree Bites</strong> connects Stanford clubs and students to share leftover
               food after events — reducing waste and building community one
               meal at a time.
             </p>
