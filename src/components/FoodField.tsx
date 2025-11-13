@@ -3,20 +3,23 @@ import { Suspense, useRef, useMemo, useEffect } from "react";
 import { TextureLoader } from "three";
 import FloatingFood from "@/components/FloatingFood";
 
-// ✅ Guaranteed safe URLs for Vite + R3F
 const foods = [
-  new URL("@/assets/food/broccoli.png", import.meta.url).href,
-  new URL("@/assets/food/candy.png", import.meta.url).href,
-  new URL("@/assets/food/egg.png", import.meta.url).href,
-  new URL("@/assets/food/lemon.png", import.meta.url).href,
-  new URL("@/assets/food/onigiri.png", import.meta.url).href,
-  new URL("@/assets/food/onion.png", import.meta.url).href,
-  new URL("@/assets/food/persimmon.png", import.meta.url).href,
-  new URL("@/assets/food/sashimi.png", import.meta.url).href,
-  new URL("@/assets/food/soup.png", import.meta.url).href,
-  new URL("@/assets/food/tomato.png", import.meta.url).href,
-];
-
+    new URL("@/assets/food/soup.png", import.meta.url).href,
+    new URL("@/assets/food/persimmon.png", import.meta.url).href,
+    new URL("@/assets/food/onigiri.png", import.meta.url).href,
+    new URL("@/assets/food/broccoli.png", import.meta.url).href,
+    new URL("@/assets/food/egg.png", import.meta.url).href,
+    new URL("@/assets/food/lemon.png", import.meta.url).href,
+    new URL("@/assets/food/sashimi.png", import.meta.url).href,
+    new URL("@/assets/food/tomato.png", import.meta.url).href,
+    new URL("@/assets/food/candy.png", import.meta.url).href,
+    new URL("@/assets/food/onion.png", import.meta.url).href,
+    new URL("@/assets/food/cheese.png", import.meta.url).href,
+    new URL("@/assets/food/leek.png", import.meta.url).href,
+    new URL("@/assets/food/watermelon.png", import.meta.url).href,
+    new URL("@/assets/food/cake.png", import.meta.url).href,
+  ];
+  
 const MIN_DISTANCE = 0.6; // Minimum distance between food items in pile
 
 // Generate positions spread across the bottom of the screen with more at edges
