@@ -1,6 +1,6 @@
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useLoader } from "@react-three/fiber";
 import { Suspense } from "react";
-import * as THREE from "three";
+import { TextureLoader } from "three";
 import FloatingFood from "@/components/FloatingFood";
 import soup from "@/assets/food/soup.png";
 import persimmon from "@/assets/food/persimmon.png";
@@ -8,15 +8,25 @@ import onigiri from "@/assets/food/onigiri.png";
 
 const foods = [soup, persimmon, onigiri];
 
-const FoodField = () => {
-  const loader = new THREE.TextureLoader();
-  const textures = foods.map((f) => loader.load(f)); // ✅ simplified, works with Vite
+const FoodParticles = () => {
+  // useLoader properly handles async texture loading with Suspense
+  const textures = useLoader(TextureLoader, foods);
 
   const particles = Array.from({ length: 9 }, (_, i) => ({
     texture: textures[i % textures.length],
     index: i,
   }));
 
+  return (
+    <>
+      {particles.map((p, i) => (
+        <FloatingFood key={i} texture={p.texture} index={p.index} />
+      ))}
+    </>
+  );
+};
+
+const FoodField = () => {
   return (
     <Canvas
       camera={{ position: [0, 0, 5] }}
@@ -25,9 +35,7 @@ const FoodField = () => {
       className="pointer-events-none"
     >
       <Suspense fallback={null}>
-        {particles.map((p, i) => (
-          <FloatingFood key={i} texture={p.texture} index={p.index} />
-        ))}
+        <FoodParticles />
       </Suspense>
     </Canvas>
   );
