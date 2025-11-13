@@ -108,11 +108,11 @@ const FloatingFood = ({ texture, index, initialPos, positionsRef, minDistance, m
       velocity.current.y -= gravity.current;
     } else {
       // Much reduced gravity when being dragged to allow upward movement
-      velocity.current.y -= gravity.current * 0.1;
+      velocity.current.y -= gravity.current * 0.01;
     }
     
     // Apply velocity to position (with max velocity limit)
-    const maxVelocity = 0.5; // Limit maximum velocity to prevent items from being flung too far
+    const maxVelocity = 0.8; // Limit maximum velocity to prevent items from being flung too far
     const velMagnitude = Math.sqrt(velocity.current.x * velocity.current.x + velocity.current.y * velocity.current.y);
     if (velMagnitude > maxVelocity) {
       velocity.current.x = (velocity.current.x / velMagnitude) * maxVelocity;
