@@ -79,7 +79,7 @@ const FoodParticles = ({ mouseStateRef }: FoodParticlesProps) => {
 
   // Generate initial positions spread across the bottom
   const initialPositions = useMemo(
-    () => generateBottomPositions(25),
+    () => generateBottomPositions(30),
     []
   );
 
