@@ -18,7 +18,7 @@ const AppDemo = () => {
             <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 rounded-[3rem] blur-3xl" />
             
             {/* Main Content */}
-            <div className="relative bg-card rounded-3xl shadow-2xl p-8 md:p-12">
+            <div className="relative bg-card rounded-3xl shadow-2xl p-8 md:p-12 transition-transform hover:-translate-y-2 hover:shadow-2xl">
               <div className="grid md:grid-cols-2 gap-12 items-center">
                 {/* Left - Phone Mockup */}
                 <div className="relative animate-scale-in mx-auto">

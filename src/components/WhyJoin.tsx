@@ -33,7 +33,7 @@ const WhyJoin = () => {
           <div className="relative animate-fade-in-up">
             <div className="relative">
               {/* Main Card */}
-              <div className="bg-card rounded-3xl p-8 shadow-2xl">
+              <div className="bg-card rounded-3xl p-8 shadow-2xl transition-transform hover:-translate-y-2 hover:shadow-2xl">
                 <div className="space-y-6">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center">

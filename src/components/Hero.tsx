@@ -1,8 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import heroImage from "@/assets/hero-food.jpg";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 const Hero = () => {
+  const { scrollY } = useScroll();
+  
+  // Parallax transforms - blobs move at different speeds
+  const blob1Y = useTransform(scrollY, [0, 1000], [0, 200]);
+  const blob2Y = useTransform(scrollY, [0, 1000], [0, -150]);
+  
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     element?.scrollIntoView({ behavior: "smooth" });
@@ -13,12 +20,20 @@ const Hero = () => {
       {/* Gradient Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#8C1515]/10 via-white to-[#2FB16A]/10" />
 
-      {/* Animated Background Blobs */}
+      {/* Animated Background Blobs with Parallax */}
       <div className="absolute inset-0 opacity-40">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-[#2FB16A]/10 rounded-full blur-3xl animate-pulse-soft" />
-        <div
+        <motion.div 
+          className="absolute top-20 left-10 w-72 h-72 bg-[#2FB16A]/10 rounded-full blur-3xl animate-pulse-soft"
+          style={{
+            y: blob1Y,
+          }}
+        />
+        <motion.div
           className="absolute bottom-20 right-10 w-96 h-96 bg-[#8C1515]/10 rounded-full blur-3xl animate-pulse-soft"
-          style={{ animationDelay: "1s" }}
+          style={{
+            y: blob2Y,
+            animationDelay: "1s"
+          }}
         />
       </div>
 
@@ -83,11 +98,11 @@ const Hero = () => {
             </div>
 
             {/* Floating Emojis */}
-            <div className="absolute -top-6 -right-6 bg-card p-4 rounded-2xl shadow-lg animate-float">
+            <div className="absolute -top-6 -right-6 bg-card p-4 rounded-2xl shadow-lg animate-float transition-transform hover:-translate-y-2 hover:shadow-xl">
               <div className="text-4xl">🍕</div>
             </div>
             <div
-              className="absolute -bottom-6 -left-6 bg-card p-4 rounded-2xl shadow-lg animate-float"
+              className="absolute -bottom-6 -left-6 bg-card p-4 rounded-2xl shadow-lg animate-float transition-transform hover:-translate-y-2 hover:shadow-xl"
               style={{ animationDelay: "1s" }}
             >
               <div className="text-4xl">🥗</div>

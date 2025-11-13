@@ -4,13 +4,14 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import confetti from "canvas-confetti";
 
 const JoinForm = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     clubName: "",
-    contactName: "",
+    contactPerson: "",
     email: "",
     message: ""
   });
@@ -20,45 +21,90 @@ const JoinForm = () => {
     setIsSubmitting(true);
 
     // Basic validation
-    if (!formData.clubName || !formData.contactName || !formData.email) {
+    if (!formData.clubName || !formData.contactPerson || !formData.email) {
       toast({
         title: "Missing Information",
         description: "Please fill in all required fields",
-        variant: "destructive"
+        variant: "destructive",
       });
       setIsSubmitting(false);
       return;
     }
 
-    // Stanford email validation
-    const stanfordEmailRegex = /^[^\s@]+@stanford\.edu$/i;
-    if (!stanfordEmailRegex.test(formData.email)) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
       toast({
         title: "Invalid Email",
-        description: "Please enter a valid Stanford email address (@stanford.edu)",
-        variant: "destructive"
+        description: "Please enter a valid email address",
+        variant: "destructive",
       });
       setIsSubmitting(false);
       return;
     }
 
-    // Simulate submission
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    try {
+      const googleFormURL =
+        "https://docs.google.com/forms/u/3/d/e/1FAIpQLSfs3MCeqE72ahGdUc4TzAm74xXUtpklr32Kg5rF5Jkx6mA0CA/formResponse";
 
-    // Show success with confetti effect
-    toast({
-      title: "🎉 Welcome to Food Bites!",
-      description: "We'll be in touch soon with early access details.",
-    });
+      const params = new URLSearchParams({
+        "entry.1029101787": formData.clubName,
+        "entry.751299023": formData.contactPerson,
+        "entry.1769690342": formData.email,
+        "entry.58283671": formData.message,
+      });
 
-    // Reset form
-    setFormData({
-      clubName: "",
-      contactName: "",
-      email: "",
-      message: ""
-    });
-    
+      await fetch(googleFormURL, {
+        method: "POST",
+        mode: "no-cors",
+        body: params,
+      });
+
+      // Launch confetti with green and cardinal (red) particles
+      const duration = 3000;
+      const end = Date.now() + duration;
+
+      const colors = ['#2FB16A', '#8C1515']; // Green and Cardinal red
+
+      (function frame() {
+        confetti({
+          particleCount: 2,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0 },
+          colors: colors,
+        });
+        confetti({
+          particleCount: 2,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1 },
+          colors: colors,
+        });
+
+        if (Date.now() < end) {
+          requestAnimationFrame(frame);
+        }
+      }());
+
+      toast({
+        title: "🎉 Thanks for signing up!",
+        description: "You're on the Tree Bites waitlist — we'll reach out before launch.",
+      });
+
+      setFormData({
+        clubName: "",
+        contactPerson: "",
+        email: "",
+        message: "",
+      });
+    } catch (error) {
+      toast({
+        title: "Submission failed",
+        description: "Please try again later.",
+        variant: "destructive",
+      });
+    }
+
     setIsSubmitting(false);
   };
 
@@ -76,7 +122,7 @@ const JoinForm = () => {
           </p>
         </div>
 
-        <div className="bg-card rounded-3xl shadow-2xl p-8 md:p-12 animate-scale-in" style={{ animationDelay: "0.2s" }}>
+        <div className="bg-card rounded-3xl shadow-2xl p-8 md:p-12 animate-scale-in transition-transform hover:-translate-y-2 hover:shadow-2xl" style={{ animationDelay: "0.2s" }}>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <label htmlFor="clubName" className="text-sm font-semibold">
@@ -93,14 +139,14 @@ const JoinForm = () => {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="contactName" className="text-sm font-semibold">
+              <label htmlFor="contactPerson" className="text-sm font-semibold">
                 Contact Name <span className="text-primary">*</span>
               </label>
               <Input
-                id="contactName"
+                id="contactPerson"
                 placeholder="Jane Doe"
-                value={formData.contactName}
-                onChange={(e) => handleChange("contactName", e.target.value)}
+                value={formData.contactPerson}
+                onChange={(e) => handleChange("contactPerson", e.target.value)}
                 required
                 className="rounded-xl"
               />
@@ -108,12 +154,12 @@ const JoinForm = () => {
 
             <div className="space-y-2">
               <label htmlFor="email" className="text-sm font-semibold">
-                Stanford Email <span className="text-primary">*</span>
+                Email <span className="text-primary">*</span>
               </label>
               <Input
                 id="email"
                 type="email"
-                placeholder="name@stanford.edu"
+                placeholder="your@email.com"
                 value={formData.email}
                 onChange={(e) => handleChange("email", e.target.value)}
                 required
