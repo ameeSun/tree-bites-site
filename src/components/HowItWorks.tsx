@@ -1,4 +1,6 @@
 import { Camera, MapPin, Bell } from "lucide-react";
+import { motion, useInView } from "framer-motion";
+import { useRef } from "react";
 
 const steps = [
   {
@@ -22,24 +24,42 @@ const steps = [
 ];
 
 const HowItWorks = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+  const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
+
   return (
-    <section id="how-it-works" className="py-24 px-6 bg-gradient-to-b from-background to-secondary/30">
+    <section 
+      ref={sectionRef}
+      id="how-it-works" 
+      className="py-24 px-6 bg-gradient-to-b from-background to-secondary/30"
+    >
       <div className="container">
-        <div className="text-center mb-16 animate-fade-in-up">
+        <motion.div 
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 40 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+        >
           <h2 className="text-4xl md:text-5xl font-bold mb-4">How It Works</h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Three simple steps to turn leftover food into campus joy
           </p>
-        </div>
+        </motion.div>
 
         <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {steps.map((step, index) => {
             const Icon = step.icon;
             return (
-              <div 
+              <motion.div 
                 key={index}
-                className="relative animate-fade-in-up"
-                style={{ animationDelay: `${index * 0.2}s` }}
+                className="relative"
+                initial={{ opacity: 0, y: 60 }}
+                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 60 }}
+                transition={{ 
+                  duration: 0.6, 
+                  delay: index * 0.2,
+                  ease: "easeOut" 
+                }}
               >
                 {/* Connector Line (hidden on mobile) */}
                 {index < steps.length - 1 && (
@@ -63,7 +83,7 @@ const HowItWorks = () => {
                     {step.description}
                   </p>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>

@@ -29,8 +29,7 @@ const Mission = () => {
             </span>
           </div>
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Built by Stanford students,<br />
-            <span className="text-primary">for Stanford students</span>
+            Feed students, not <span className="text-primary">landfills</span>
           </h2>
           <p className="text-xl text-muted-foreground leading-relaxed max-w-3xl mx-auto">
             Every week, Stanford events throw away hundreds of pounds of edible food. 

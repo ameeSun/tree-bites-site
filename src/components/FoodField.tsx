@@ -19,22 +19,42 @@ const foods = [
 
 const MIN_DISTANCE = 0.6; // Minimum distance between food items in pile
 
-// Generate positions spread across the bottom of the screen
+// Generate positions spread across the bottom of the screen with more at edges
 const generateBottomPositions = (count: number) => {
   const positions: Array<{ x: number; y: number; z: number }> = [];
   const bottomY = -2.5; // Bottom of screen in 3D space
   const spreadWidth = 8; // Width to spread items across
+  const edgeWidth = 1.5; // Width of edge clusters
   
-  // Calculate spacing to evenly distribute items
-  const spacing = spreadWidth / (count - 1);
+  // Allocate items: some at left edge, some at right edge, rest in middle
+  const leftEdgeCount = Math.floor(count * 0.25); // 25% at left edge
+  const rightEdgeCount = Math.floor(count * 0.25); // 25% at right edge
+  const middleCount = count - leftEdgeCount - rightEdgeCount; // Rest in middle
   
-  for (let i = 0; i < count; i++) {
-    // Evenly distribute across the width with some random variation
-    const baseX = -spreadWidth / 2 + (i * spacing);
-    const x = baseX + (Math.random() - 0.5) * 0.3; // Small random offset
-    const y = bottomY + Math.random() * 0.2; // Slight vertical variation
+  // Left edge positions
+  for (let i = 0; i < leftEdgeCount; i++) {
+    const x = -spreadWidth / 2 - edgeWidth / 2 + Math.random() * edgeWidth;
+    const y = bottomY + Math.random() * 0.3;
     const z = (Math.random() - 0.5) * 0.4;
-    
+    positions.push({ x, y, z });
+  }
+  
+  // Middle positions
+  const middleWidth = spreadWidth - edgeWidth;
+  const middleSpacing = middleCount > 1 ? middleWidth / (middleCount - 1) : 0;
+  for (let i = 0; i < middleCount; i++) {
+    const baseX = -middleWidth / 2 + (i * middleSpacing);
+    const x = baseX + (Math.random() - 0.5) * 0.3;
+    const y = bottomY + Math.random() * 0.2;
+    const z = (Math.random() - 0.5) * 0.4;
+    positions.push({ x, y, z });
+  }
+  
+  // Right edge positions
+  for (let i = 0; i < rightEdgeCount; i++) {
+    const x = spreadWidth / 2 - edgeWidth / 2 + Math.random() * edgeWidth;
+    const y = bottomY + Math.random() * 0.3;
+    const z = (Math.random() - 0.5) * 0.4;
     positions.push({ x, y, z });
   }
 
