@@ -15,7 +15,7 @@ const Hero = () => {
 
       {/* Floating Food Images Background */}
       <div className="absolute inset-0 z-0">
-        {/* <FoodField /> */}
+        <FoodField />
       </div>
 
       {/* Centered Content */}
