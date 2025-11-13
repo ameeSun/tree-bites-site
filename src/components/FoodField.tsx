@@ -44,8 +44,6 @@ const FoodField = () => {
       gl={{ alpha: true }}
       className="pointer-events-none"
     >
-      {/* Temporary background for visibility */}
-      <color attach="background" args={["#ffffff"]} />
 
       <Suspense fallback={null}>
         <FoodParticles />
