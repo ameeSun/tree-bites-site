@@ -21,6 +21,7 @@ const FloatingFood = ({ texture, index, initialPos, positionsRef, minDistance, m
   const mesh = useRef<THREE.Mesh>(null!);
   const velocity = useRef({ x: 0, y: 0 });
   const targetPos = useRef({ x: initialPos.x, y: initialPos.y });
+  const gravity = useRef(0.01); // Gravity force for falling
 
   const {
     baseX,
@@ -83,14 +84,33 @@ const FloatingFood = ({ texture, index, initialPos, positionsRef, minDistance, m
             y: dragDir.y / dragLength
           };
           
-          // Push items in the drag direction (gentler force)
-          const pushForce = pushStrength * dragSpeed * 0.12;
+          // Push items in the drag direction (stronger force, especially upward)
+          const basePushForce = pushStrength * dragSpeed * 0.5;
+          // Increase upward drag force significantly to overcome gravity
+          const upwardMultiplier = normalizedDrag.y > 0 ? 3.5 : 1.0; // 3.5x force when dragging up
+          const pushForce = basePushForce * upwardMultiplier;
           velocity.current.x += normalizedDrag.x * pushForce;
           velocity.current.y += normalizedDrag.y * pushForce;
         }
       }
     }
 
+    // Apply gravity (falling effect) - always active
+    // Reduce gravity when being actively dragged to allow upward movement
+    const isBeingDragged = mouseStateRef.current.isDown && 
+      Math.sqrt(
+        Math.pow(mouseStateRef.current.dragCurrent.x - currentX, 2) + 
+        Math.pow(mouseStateRef.current.dragCurrent.y - currentY, 2)
+      ) < 2.0;
+    
+    if (!isBeingDragged) {
+      // Full gravity when not being actively dragged
+      velocity.current.y -= gravity.current;
+    } else {
+      // Much reduced gravity when being dragged to allow upward movement
+      velocity.current.y -= gravity.current * 0.1;
+    }
+    
     // Apply velocity to position (with max velocity limit)
     const maxVelocity = 0.5; // Limit maximum velocity to prevent items from being flung too far
     const velMagnitude = Math.sqrt(velocity.current.x * velocity.current.x + velocity.current.y * velocity.current.y);
@@ -101,6 +121,22 @@ const FloatingFood = ({ texture, index, initialPos, positionsRef, minDistance, m
     
     currentX += velocity.current.x;
     currentY += velocity.current.y;
+    
+    // Stop falling when reaching bottom (with some bounce damping)
+    const bottomY = -3.5; // Bottom boundary
+    if (currentY < bottomY) {
+      currentY = bottomY;
+      // Dampen vertical velocity when hitting bottom
+      if (velocity.current.y < 0) {
+        velocity.current.y *= -0.3; // Bounce with 30% energy
+        // Stop bouncing if velocity is very small
+        if (Math.abs(velocity.current.y) < 0.01) {
+          velocity.current.y = 0;
+        }
+      }
+      // Also reduce horizontal velocity when on ground (friction)
+      velocity.current.x *= 0.95;
+    }
 
     // Collision avoidance with other food items
     let avoidX = 0;
@@ -145,9 +181,17 @@ const FloatingFood = ({ texture, index, initialPos, positionsRef, minDistance, m
     mesh.current.rotation.z += rotationSpeed * 0.3;
   });
 
+  // Calculate aspect ratio from texture to prevent stretching
+  const aspectRatio = useMemo(() => {
+    if (texture.image) {
+      return texture.image.width / texture.image.height;
+    }
+    return 1; // Default to square if dimensions not available
+  }, [texture]);
+
   return (
     <mesh ref={mesh} position={[baseX, baseY, baseZ]}>
-      <planeGeometry args={[size, size]} />
+      <planeGeometry args={[size * aspectRatio, size]} />
       <meshBasicMaterial 
         map={texture} 
         transparent 

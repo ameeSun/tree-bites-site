@@ -22,30 +22,33 @@ const foods = [
   
 const MIN_DISTANCE = 0.6; // Minimum distance between food items in pile
 
-// Generate positions spread across the bottom of the screen with more at edges
+// Generate positions at the top of the screen for falling animation
 // Avoids center area where text is displayed
-const generateBottomPositions = (count: number) => {
+// Staggers vertical positions to space out falls
+const generateTopPositions = (count: number) => {
   const positions: Array<{ x: number; y: number; z: number }> = [];
-  const bottomY = -2.5; // Bottom of screen in 3D space
+  const topY = 4.0; // Top of screen in 3D space
   const spreadWidth = 8; // Width to spread items across
   const edgeWidth = 2.5; // Wider edge clusters for corners
   const centerAvoidance = 2.0; // Width of center area to avoid (where text is)
+  const verticalSpread = 3.0; // Vertical range to spread items (creates staggered falling)
   
   // Allocate items: more at left edge, more at right edge, fewer in middle
-  const leftEdgeCount = Math.floor(count * 0.25); // 45% at left edge/corner
-  const rightEdgeCount = Math.floor(count * 0.25); // 45% at right edge/corner
+  const leftEdgeCount = Math.floor(count * 0.25); // 25% at left edge/corner
+  const rightEdgeCount = Math.floor(count * 0.25); // 25% at right edge/corner
   const middleCount = count - leftEdgeCount - rightEdgeCount; // Rest in middle (but avoiding center)
   
-  // Left edge/corner positions - push towards far left
+  // Left edge/corner positions - push towards far left, staggered vertically
   for (let i = 0; i < leftEdgeCount; i++) {
-    // Push further left and spread vertically for corner effect
+    // Push further left and spread horizontally for corner effect
     const x = -spreadWidth / 2 - edgeWidth / 2 - Math.random() * edgeWidth * 0.5;
-    const y = bottomY + Math.random() * 0.4; // More vertical spread
+    // Stagger vertical positions to space out falls
+    const y = topY + (i / leftEdgeCount) * verticalSpread + Math.random() * 0.3;
     const z = (Math.random() - 0.5) * 0.5;
     positions.push({ x, y, z });
   }
   
-  // Middle positions - but avoiding center area
+  // Middle positions - but avoiding center area, staggered vertically
   const middleWidth = spreadWidth - centerAvoidance; // Exclude center
   const middleSpacing = middleCount > 1 ? middleWidth / (middleCount - 1) : 0;
   for (let i = 0; i < middleCount; i++) {
@@ -60,16 +63,18 @@ const generateBottomPositions = (count: number) => {
       baseX = centerAvoidance / 2 + ((i - halfMiddle) * middleSpacing);
     }
     const x = baseX + (Math.random() - 0.5) * 0.2;
-    const y = bottomY + Math.random() * 0.2;
+    // Stagger vertical positions to space out falls
+    const y = topY + (i / middleCount) * verticalSpread + Math.random() * 0.2;
     const z = (Math.random() - 0.5) * 0.4;
     positions.push({ x, y, z });
   }
   
-  // Right edge/corner positions - push towards far right
+  // Right edge/corner positions - push towards far right, staggered vertically
   for (let i = 0; i < rightEdgeCount; i++) {
-    // Push further right and spread vertically for corner effect
+    // Push further right and spread horizontally for corner effect
     const x = spreadWidth / 2 + edgeWidth / 2 + Math.random() * edgeWidth * 0.5;
-    const y = bottomY + Math.random() * 0.4; // More vertical spread
+    // Stagger vertical positions to space out falls
+    const y = topY + (i / rightEdgeCount) * verticalSpread + Math.random() * 0.3;
     const z = (Math.random() - 0.5) * 0.5;
     positions.push({ x, y, z });
   }
@@ -129,9 +134,9 @@ const FoodParticles = ({ mouseStateRef }: FoodParticlesProps) => {
   // Shared ref to track all positions for collision detection
   const positionsRef = useRef<Map<number, { x: number; y: number }>>(new Map());
 
-  // Generate initial positions spread across the bottom
+  // Generate initial positions at the top for falling
   const initialPositions = useMemo(
-    () => generateBottomPositions(30),
+    () => generateTopPositions(30),
     []
   );
 
