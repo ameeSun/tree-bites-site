@@ -37,7 +37,10 @@ const AppDemo = () => {
                         />
                         
                         {/* Overlay Animation */}
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-primary/20 rounded-full animate-ping" />
+                        <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" aria-hidden="true">
+                          <span className="block w-20 h-20 rounded-full bg-primary/20 animate-ping origin-center" />
+                          {/* <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 block w-4 h-4 rounded-full bg-primary" /> */}
+                        </div>
                       </div>
                     </div>
 

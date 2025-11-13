@@ -88,7 +88,7 @@ const Hero = () => {
             className="relative animate-scale-in"
             style={{ animationDelay: "0.2s" }}
           >
-            <div className="relative rounded-3xl overflow-hidden shadow-2xl">
+            <div className="relative rounded-3xl overflow-hidden shadow-2xl transition-transform">
               <img
                 src={heroImage}
                 alt="Students sharing food after a Stanford event"
