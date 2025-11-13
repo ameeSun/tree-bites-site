@@ -35,8 +35,8 @@ const FoodParticle = ({ texture, index }: any) => {
   });
 
   return (
-    <mesh ref={mesh} position={[Math.random() * 4 - 2, Math.random() * 2 - 1, 0]}>
-      <planeGeometry args={[0.6, 0.6]} />
+    <mesh ref={mesh} position={[Math.random() * 8 - 4, Math.random() * 6 - 3, 0]}>
+      <planeGeometry args={[0.8, 0.8]} />
       <meshBasicMaterial map={texture} transparent />
     </mesh>
   );
@@ -47,10 +47,19 @@ const FoodField = () => {
   const loader = new THREE.TextureLoader();
   const textures = foods.map(f => loader.load(f));
 
+  // Create multiple instances of each food type
+  const particles = [];
+  for (let i = 0; i < 9; i++) {
+    particles.push({
+      texture: textures[i % textures.length],
+      index: i,
+    });
+  }
+
   return (
-    <Canvas camera={{ position: [0, 0, 5] }}>
-      {textures.map((t, i) => (
-        <FoodParticle key={i} texture={t} index={i} />
+    <Canvas camera={{ position: [0, 0, 5] }} style={{ width: '100%', height: '100%' }}>
+      {particles.map((p, i) => (
+        <FoodParticle key={i} texture={p.texture} index={p.index} />
       ))}
     </Canvas>
   );
@@ -67,11 +76,16 @@ const Hero = () => {
       {/* Soft gradient backdrop */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#8C1515]/10 via-white to-[#2FB16A]/10" />
 
+      {/* Floating Food Images Background */}
+      <div className="absolute inset-0 z-0">
+        <FoodField />
+      </div>
+
+      {/* Centered Content */}
       <div className="container relative z-10 px-6 py-20">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left: Text */}
+        <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
           <div className="space-y-8 animate-fade-in-up">
-            <span className="px-4 py-2 rounded-full bg-[#2FB16A]/10 text-[#2FB16A] text-sm font-semibold">
+            <span className="inline-block px-4 py-2 rounded-full bg-[#2FB16A]/10 text-[#2FB16A] text-sm font-semibold">
               🌲 Built at Stanford
             </span>
 
@@ -80,13 +94,13 @@ const Hero = () => {
               <span className="text-[#8C1515]">End campus waste.</span>
             </h1>
 
-            <p className="text-xl text-muted-foreground max-w-xl">
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Tree Bites connects Stanford clubs and students to share leftover
               food after events — reducing waste and building community one
               meal at a time.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+            <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center">
               <Button
                 variant="hero"
                 size="lg"
@@ -104,32 +118,6 @@ const Hero = () => {
               >
                 Learn How It Works
               </Button>
-            </div>
-          </div>
-
-          {/* Right Column - Image */}
-          <div
-            className="relative animate-scale-in"
-            style={{ animationDelay: "0.2s" }}
-          >
-            <div className="relative rounded-3xl overflow-hidden shadow-2xl">
-              <img
-                src={heroImage}
-                alt="Students sharing food after a Stanford event"
-                className="w-full h-auto object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-white/60 to-transparent" />
-            </div>
-
-            {/* Floating Emojis */}
-            <div className="absolute -top-6 -right-6 bg-card p-4 rounded-2xl shadow-lg animate-float transition-transform hover:-translate-y-2 hover:shadow-xl">
-              <div className="text-4xl">🍕</div>
-            </div>
-            <div
-              className="absolute -bottom-6 -left-6 bg-card p-4 rounded-2xl shadow-lg animate-float transition-transform hover:-translate-y-2 hover:shadow-xl"
-              style={{ animationDelay: "1s" }}
-            >
-              <div className="text-4xl">🥗</div>
             </div>
           </div>
         </div>
