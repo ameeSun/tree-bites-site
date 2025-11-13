@@ -26,8 +26,11 @@ const Hero = () => {
       ref={sectionRef}
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
+      {/* Red gradient from top to bottom */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#8C1515]/20 via-[#8C1515]/10 to-transparent z-0" />
+      
       {/* Soft gradient backdrop - behind food images */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#8C1515]/5 via-transparent to-[#2FB16A]/5 z-0" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#8C1515]/5 via-transparent to-[#2FB16A]/5 z-[0.5]" />
 
       {/* Floating Food Images Background */}
       <div className="absolute inset-0 z-[1]">

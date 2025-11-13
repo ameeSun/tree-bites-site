@@ -117,7 +117,7 @@ const FoodField = () => {
 
   return (
     <Canvas
-      camera={{ position: [0, 0, 5] }}
+    camera={{ position: [0, 0, 7], fov: 75 }}
       style={{ width: "100%", height: "100%", userSelect: 'none', WebkitUserSelect: 'none' }}
       gl={{ alpha: true }}
       className="pointer-events-auto select-none"
@@ -126,20 +126,46 @@ const FoodField = () => {
         e.stopPropagation();
         (e.target as HTMLElement).setPointerCapture(e.pointerId);
         const rect = e.currentTarget.getBoundingClientRect();
+        // Convert to normalized device coordinates (-1 to 1)
         const mouseX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
         const mouseY = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+        
+        // Convert to 3D world space coordinates
+        // Camera is at z=5, looking at origin, with FOV that shows roughly -4 to 4 in X
+        // Using aspect ratio and camera distance to calculate proper world coordinates
+        const aspect = rect.width / rect.height;
+        const fov = 50; // degrees (default R3F camera FOV)
+        const distance = 5; // camera z position
+        const worldHeight = 2 * Math.tan((fov * Math.PI / 180) / 2) * distance;
+        const worldWidth = worldHeight * aspect;
+        
+        const worldX = (mouseX * worldWidth) / 2;
+        const worldY = (mouseY * worldHeight) / 2;
+        
         mouseStateRef.current.isDown = true;
-        mouseStateRef.current.dragStart = { x: mouseX * 4, y: mouseY * 2 };
-        mouseStateRef.current.dragCurrent = { x: mouseX * 4, y: mouseY * 2 };
+        mouseStateRef.current.dragStart = { x: worldX, y: worldY };
+        mouseStateRef.current.dragCurrent = { x: worldX, y: worldY };
         mouseStateRef.current.dragDirection = { x: 0, y: 0 };
       }}
       onPointerMove={(e) => {
         if (mouseStateRef.current.isDown) {
           e.preventDefault();
           const rect = e.currentTarget.getBoundingClientRect();
+          // Convert to normalized device coordinates (-1 to 1)
           const mouseX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
           const mouseY = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-          mouseStateRef.current.dragCurrent = { x: mouseX * 4, y: mouseY * 2 };
+          
+          // Convert to 3D world space coordinates
+          const aspect = rect.width / rect.height;
+          const fov = 50;
+          const distance = 5;
+          const worldHeight = 2 * Math.tan((fov * Math.PI / 180) / 2) * distance;
+          const worldWidth = worldHeight * aspect;
+          
+          const worldX = (mouseX * worldWidth) / 2;
+          const worldY = (mouseY * worldHeight) / 2;
+          
+          mouseStateRef.current.dragCurrent = { x: worldX, y: worldY };
           // Calculate drag direction
           mouseStateRef.current.dragDirection = {
             x: mouseStateRef.current.dragCurrent.x - mouseStateRef.current.dragStart.x,
