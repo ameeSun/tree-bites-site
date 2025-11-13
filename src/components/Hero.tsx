@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import { motion, useMotionValue } from "framer-motion";
 import FoodField from "@/components/FoodField";
 
 const Hero = () => {

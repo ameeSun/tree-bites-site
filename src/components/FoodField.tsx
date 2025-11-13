@@ -27,7 +27,11 @@ const FoodParticles = () => {
 
 const FoodField = () => {
   return (
-    <Canvas camera={{ position: [0, 0, 5] }} style={{ width: "100%", height: "100%" }}>
+    <Canvas 
+      camera={{ position: [0, 0, 5], fov: 75 }} 
+      style={{ width: "100%", height: "100%" }}
+      gl={{ antialias: true, alpha: true }}
+    >
       <Suspense fallback={null}>
         <FoodParticles />
       </Suspense>
