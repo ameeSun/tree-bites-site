@@ -1,4 +1,4 @@
-import appMockup from "@/assets/app-mockup.png";
+import FoodMap from "@/components/mockup/components/FoodMap";
 
 const features = [
   {
@@ -42,25 +42,18 @@ const AppDemo = () => {
             {/* Main Content */}
             <div className="relative bg-card rounded-3xl shadow-2xl p-8 md:p-12 transition-transform hover:-translate-y-2 hover:shadow-2xl">
               <div className="grid md:grid-cols-2 gap-12 items-center">
-                {/* Left - Phone Mockup */}
+                {/* Left - Phone Mockup with Interactive Map */}
                 <div className="relative animate-scale-in mx-auto">
-                  <div className="relative w-[280px] mx-auto">
-                    {/* Phone Frame */}
-                    <div className="relative bg-foreground rounded-[3rem] p-3 shadow-2xl">
+                  <div className="relative w-[390px] mx-auto">
+                    {/* Phone Frame - iPhone 16 size */}
+                    <div className="relative bg-black rounded-[3.5rem] p-[10px] shadow-2xl">
                       {/* Notch */}
-                      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-7 bg-foreground rounded-b-3xl z-10" />
+                      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[126px] h-[37px] bg-black rounded-b-[20px] z-10" />
                       
-                      {/* Screen */}
-                      <div className="relative bg-background rounded-[2.5rem] overflow-hidden aspect-[9/19]">
-                        <img 
-                          src={appMockup} 
-                          alt="Tree Bites app interface showing food locations on campus map" 
-                          className="w-full h-full object-cover"
-                        />
-                        
-                        {/* Overlay Animation */}
-                        <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" aria-hidden="true">
-                          <span className="block w-20 h-20 rounded-full bg-primary/20 animate-ping origin-center" />
+                      {/* Screen - iPhone 16 dimensions (390px x 844px) */}
+                      <div className="relative bg-background rounded-[3rem] overflow-hidden" style={{ width: '370px', height: '844px' }}>
+                        <div className="w-full h-full">
+                          <FoodMap />
                         </div>
                       </div>
                     </div>
