@@ -1,60 +1,67 @@
-import { MapPin } from "lucide-react";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { divIcon } from "leaflet";
+import "leaflet/dist/leaflet.css";
 import type { FoodEvent } from "../data/FoodEvent";
 import { foodEvents } from "../data/FoodEvent";
 
-const positions = [
-  { top: "15%", left: "20%" },
-  { top: "30%", left: "60%" },
-  { top: "60%", left: "25%" },
-  { top: "65%", left: "70%" },
-  { top: "40%", left: "80%" },
-  { top: "75%", left: "50%" },
-  { top: "20%", left: "75%" },
-  { top: "55%", left: "10%" },
-];
+// Stanford campus center coordinates
+const stanfordCenter: [number, number] = [37.4275, -122.1697];
+
+// Create custom icon for markers using divIcon
+const createCustomIcon = (imageUrl: string, title: string) => {
+  return divIcon({
+    html: `
+      <div class="relative" style="display: flex; align-items: center; justify-content: center;">
+        <div class="w-16 h-16 rounded-full border-[3px] border-emerald-300 bg-white shadow-lg overflow-hidden" style="display: flex; align-items: center; justify-content: center;">
+          <img src="${imageUrl}" alt="${title}" style="width: 100%; height: 100%; object-fit: cover; object-position: center;" />
+        </div>
+        <div class="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center border-2 border-white shadow" style="display: flex; align-items: center; justify-content: center;">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 14px; height: 14px;">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        </div>
+      </div>
+    `,
+    className: "custom-marker",
+    iconSize: [64, 64],
+    iconAnchor: [32, 64],
+    popupAnchor: [0, -64],
+  });
+};
 
 const FoodMap = ({ events = foodEvents }: { events?: FoodEvent[] }) => {
-  const displayEvents = events.slice(0, positions.length);
-  
   return (
-    <div className="relative h-full w-full max-w-full min-h-[500px] rounded-[32px] bg-gradient-to-b from-white to-emerald-50 shadow-inner border border-emerald-100 overflow-hidden">
-      {/* Grid Pattern */}
-      <div
-        className="absolute inset-0 opacity-70"
-        style={{
-          backgroundImage:
-            "linear-gradient(0deg, rgba(23,199,111,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(23,199,111,0.06) 1px, transparent 1px)",
-          backgroundSize: "48px 48px",
-        }}
-      />
-
-      {/* Food Event Markers */}
-      {displayEvents.map((event, index) => {
-        const position = positions[index % positions.length];
-        return (
-          <div
+    <div className="relative h-full w-full max-w-full min-h-[500px] rounded-[32px] overflow-hidden border border-emerald-100 shadow-inner">
+      <MapContainer
+        center={stanfordCenter}
+        zoom={16}
+        className="h-full w-full rounded-[32px] z-0"
+        scrollWheelZoom={false}
+        {...({ attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>' } as any)}
+      >
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          {...({ attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' } as any)}
+        />
+        {events.map((event) => (
+          <Marker
             key={event.id}
-            className="absolute flex flex-col items-center gap-2 text-center z-10"
-            style={{ top: position.top, left: position.left, transform: 'translate(-50%, -50%)' }}
+            position={[event.lat, event.lng]}
+            {...({ icon: createCustomIcon(event.foodImage, event.title) } as any)}
           >
-            <div className="relative group">
-              <div className="w-16 h-16 rounded-full border-[3px] border-emerald-300 bg-white shadow-lg overflow-hidden">
-                <img 
-                  src={event.foodImage} 
-                  alt={event.title} 
-                  className="w-full h-full object-cover" 
-                />
+            <Popup>
+              <div className="text-center">
+                <h3 className="font-semibold text-sm mb-1">{event.title}</h3>
+                <p className="text-xs text-gray-600">{event.description}</p>
+                {event.locationNotes && (
+                  <p className="text-xs text-gray-500 mt-1">{event.locationNotes}</p>
+                )}
               </div>
-              <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center border-2 border-white shadow">
-                <MapPin className="w-3.5 h-3.5" />
-              </div>
-            </div>
-            <p className="text-xs font-semibold text-emerald-900 bg-white/90 px-3 py-1 rounded-full shadow whitespace-nowrap max-w-[120px] truncate">
-              {event.title}
-            </p>
-          </div>
-        );
-      })}
+            </Popup>
+          </Marker>
+        ))}
+      </MapContainer>
     </div>
   );
 };
