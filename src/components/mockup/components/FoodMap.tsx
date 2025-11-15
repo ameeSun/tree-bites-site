@@ -17,7 +17,7 @@ const FoodMap = ({ events = foodEvents }: { events?: FoodEvent[] }) => {
   const displayEvents = events.slice(0, positions.length);
   
   return (
-    <div className="relative h-full w-full min-h-[500px] rounded-[32px] bg-gradient-to-b from-white to-emerald-50 shadow-inner border border-emerald-100 overflow-hidden">
+    <div className="relative h-full w-full max-w-full min-h-[500px] rounded-[32px] bg-gradient-to-b from-white to-emerald-50 shadow-inner border border-emerald-100 overflow-hidden">
       {/* Grid Pattern */}
       <div
         className="absolute inset-0 opacity-70"

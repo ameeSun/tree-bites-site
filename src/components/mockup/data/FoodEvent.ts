@@ -63,7 +63,7 @@ export interface FoodEvent {
     {
       id: "5",
       title: "Cookies & Milk",
-      foodImage: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&q=80",
+      foodImage: "https://mojo.generalmills.com/api/public/content/_pLFRXFETcuXWg_Z0MhZPw_gmi_hi_res_jpeg.jpeg?v=693b292b&t=466b54bb264e48b199fc8e83ef1136b4",
       lat: 37.4255,
       lng: -122.1691,
       description: "Freshly baked chocolate chip and oatmeal cookies with cold milk.",
@@ -75,7 +75,7 @@ export interface FoodEvent {
     {
       id: "6",
       title: "Paneer Tikka & Rice",
-      foodImage: "https://images.unsplash.com/photo-1604908177445-02f0b6a41e76?w=400&q=80",
+      foodImage: "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400&q=80",
       lat: 37.4268,
       lng: -122.1735,
       description: "Indian vegetarian feast with paneer tikka, rice, and naan.",
@@ -87,7 +87,7 @@ export interface FoodEvent {
     {
       id: "7",
       title: "Bagels & Cream Cheese",
-      foodImage: "https://images.unsplash.com/photo-1612874742237-6526221588e5?w=400&q=80",
+      foodImage: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400&q=80",
       lat: 37.4270,
       lng: -122.1680,
       description: "Assorted bagels with cream cheese and spreads — help yourself!",
@@ -99,7 +99,7 @@ export interface FoodEvent {
     {
       id: "8",
       title: "Fruit & Cheese Platter",
-      foodImage: "https://images.unsplash.com/photo-1556912998-6e2f5f64b934?w=400&q=80",
+      foodImage: "https://www.tasteofhome.com/wp-content/uploads/2024/12/EXPS_TOHD24_224813_SuzanNajjar_3.jpg",
       lat: 37.4310,
       lng: -122.1665,
       description: "Fresh fruit, cheese cubes, and crackers.",

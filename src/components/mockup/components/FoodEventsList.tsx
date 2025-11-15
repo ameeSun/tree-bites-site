@@ -1,6 +1,6 @@
 import type { FoodEvent } from "../data/FoodEvent";
 import { MapPin, Clock } from "lucide-react";
-import { Badge } from "../ui/badge";
+import { Badge } from "./ui/badge";
 
 export const FoodEventsList = ({ events }: { events: FoodEvent[] }) => {
   if (!events.length)
@@ -11,7 +11,7 @@ export const FoodEventsList = ({ events }: { events: FoodEvent[] }) => {
     );
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 w-full max-w-full">
       {events.map((event) => (
         <div
           key={event.id}

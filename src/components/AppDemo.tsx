@@ -1,4 +1,4 @@
-import FoodMap from "@/components/mockup/components/FoodMap";
+import TreeBitesMockup from "@/components/mockup";
 
 const features = [
   {
@@ -52,22 +52,14 @@ const AppDemo = () => {
                       
                       {/* Screen - iPhone 16 dimensions (390px x 844px) */}
                       <div className="relative bg-background rounded-[3rem] overflow-hidden" style={{ width: '370px', height: '844px' }}>
-                        <div className="w-full h-full">
-                          <FoodMap />
+                        <div className="w-full h-full overflow-y-auto overflow-x-hidden" style={{ width: '370px', height: '844px' }}>
+                          <div className="w-full h-full max-w-full">
+                            <TreeBitesMockup />
+                          </div>
                         </div>
                       </div>
                     </div>
 
-                    {/* Floating Notification */}
-                    <div className="absolute -right-8 top-1/4 bg-card rounded-2xl p-4 shadow-xl animate-float border border-border max-w-[180px]">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                          <span className="text-lg">🍕</span>
-                        </div>
-                        <span className="font-semibold text-sm">New Food Alert!</span>
-                      </div>
-                      <p className="text-xs text-muted-foreground">Pizza at Tresidder</p>
-                    </div>
                   </div>
                 </div>
 
@@ -89,7 +81,7 @@ const AppDemo = () => {
 
                   <div className="pt-6 border-t border-border">
                     <p className="text-sm text-muted-foreground">
-                      Join <span className="font-semibold text-primary">50+ clubs</span> already using Tree Bites to make an impact
+                      Join Tree Bites to make an impact
                     </p>
                   </div>
                 </div>

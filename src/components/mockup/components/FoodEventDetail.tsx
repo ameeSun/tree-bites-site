@@ -1,8 +1,8 @@
 import { ArrowLeft, MapPin, Clock, Share2, Users } from "lucide-react";
 import type { FoodEvent } from "../data/FoodEvent";
-import { Button } from "../ui/button";
-import { Badge } from "../ui/badge";
-import { Card } from "../ui/card";
+import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
+import { Card } from "./ui/card";
 
 interface FoodEventDetailProps {
   event: FoodEvent;

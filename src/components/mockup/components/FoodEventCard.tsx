@@ -1,7 +1,7 @@
 import { Clock, MapPin } from "lucide-react";
 import type { FoodEvent } from "../data/FoodEvent";
-import { Card } from "../ui/card";
-import { Badge } from "../ui/badge";
+import { Card } from "./ui/card";
+import { Badge } from "./ui/badge";
 
 interface FoodEventCardProps {
   event: FoodEvent;
