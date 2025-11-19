@@ -1,0 +1,9 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "tree-bites-site",
+  "compatibility_date": "2025-11-15",
+  "assets": {
+    "not_found_handling": "single-page-application"
+  }
+}
+

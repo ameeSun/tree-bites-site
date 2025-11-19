@@ -87,7 +87,7 @@ export default function App() {
       </div>
 
       {/* Tabs */}
-      <Tabs defaultValue="events" className="w-full">
+      <Tabs defaultValue="events" className="w-full" key="main-tabs">
         <TabsList className="w-full bg-white border-b rounded-none h-12">
           <TabsTrigger value="events" className="flex-1">
             Events List

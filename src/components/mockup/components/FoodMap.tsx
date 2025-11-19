@@ -1,6 +1,7 @@
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { divIcon } from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { useMemo, useRef, useEffect } from "react";
 import type { FoodEvent } from "../data/FoodEvent";
 import { foodEvents } from "../data/FoodEvent";
 
@@ -31,36 +32,50 @@ const createCustomIcon = (imageUrl: string, title: string) => {
 };
 
 const FoodMap = ({ events = foodEvents }: { events?: FoodEvent[] }) => {
+  const mapRef = useRef<any>(null);
+  
+  // Memoize markers to prevent recreation on every render
+  const markers = useMemo(() => {
+    return events.map((event) => (
+      <Marker
+        key={event.id}
+        position={[event.lat, event.lng]}
+        {...({ icon: createCustomIcon(event.foodImage, event.title) } as any)}
+      >
+        <Popup>
+          <div className="text-center">
+            <h3 className="font-semibold text-sm mb-1">{event.title}</h3>
+            <p className="text-xs text-gray-600">{event.description}</p>
+            {event.locationNotes && (
+              <p className="text-xs text-gray-500 mt-1">{event.locationNotes}</p>
+            )}
+          </div>
+        </Popup>
+      </Marker>
+    ));
+  }, [events]);
+
   return (
-    <div className="relative h-full w-full max-w-full min-h-[500px] rounded-[32px] overflow-hidden border border-emerald-100 shadow-inner">
+    <div 
+      className="relative h-full w-full max-w-full min-h-[500px] rounded-[32px] overflow-hidden border border-emerald-100 shadow-inner"
+      onClick={(e) => e.stopPropagation()}
+      onMouseDown={(e) => e.stopPropagation()}
+    >
       <MapContainer
+        ref={mapRef}
+        key="stanford-map"
         center={stanfordCenter}
-        zoom={16}
+        zoom={15}
         className="h-full w-full rounded-[32px] z-0"
         scrollWheelZoom={false}
+        zoomControl={true}
         {...({ attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>' } as any)}
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           {...({ attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' } as any)}
         />
-        {events.map((event) => (
-          <Marker
-            key={event.id}
-            position={[event.lat, event.lng]}
-            {...({ icon: createCustomIcon(event.foodImage, event.title) } as any)}
-          >
-            <Popup>
-              <div className="text-center">
-                <h3 className="font-semibold text-sm mb-1">{event.title}</h3>
-                <p className="text-xs text-gray-600">{event.description}</p>
-                {event.locationNotes && (
-                  <p className="text-xs text-gray-500 mt-1">{event.locationNotes}</p>
-                )}
-              </div>
-            </Popup>
-          </Marker>
-        ))}
+        {markers}
       </MapContainer>
     </div>
   );
