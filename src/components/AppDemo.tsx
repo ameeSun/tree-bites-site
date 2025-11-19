@@ -25,7 +25,7 @@ const features = [
 
 const AppDemo = () => {
   return (
-    <section id="demo" className="py-24 px-6 bg-gradient-to-b from-secondary/30 to-background">
+    <section id="demo" className="py-20 px-4 sm:px-6 bg-gradient-to-b from-secondary/30 to-background">
       <div className="container">
         <div className="text-center mb-16 animate-fade-in-up">
           <h2 className="text-4xl md:text-5xl font-bold mb-4">See It in Action</h2>
@@ -40,19 +40,19 @@ const AppDemo = () => {
             <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 rounded-[3rem] blur-3xl" />
             
             {/* Main Content */}
-            <div className="relative bg-card rounded-3xl shadow-2xl p-8 md:p-12 transition-transform hover:-translate-y-2 hover:shadow-2xl">
-              <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="relative bg-card rounded-3xl shadow-2xl p-6 sm:p-8 md:p-12 transition-transform hover:-translate-y-2 hover:shadow-2xl overflow-hidden">
+              <div className="grid md:grid-cols-2 gap-10 sm:gap-12 items-center">
                 {/* Left - Phone Mockup with Interactive Map */}
-                <div className="relative animate-scale-in mx-auto">
-                  <div className="relative w-[390px] mx-auto">
+                <div className="relative animate-scale-in mx-auto w-full max-w-[280px] sm:max-w-[320px] md:max-w-none">
+                  <div className="relative w-full mx-auto">
                     {/* Phone Frame - iPhone 16 size */}
                     <div className="relative bg-black rounded-[3.5rem] p-[10px] shadow-2xl">
                       {/* Notch */}
-                      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[126px] h-[37px] bg-black rounded-b-[20px] z-10" />
+                      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[88px] h-[24px] sm:w-[110px] sm:h-[32px] md:w-[126px] md:h-[37px] bg-black rounded-b-[20px] z-10" />
                       
                       {/* Screen - iPhone 16 dimensions (390px x 844px) */}
-                      <div className="relative bg-background rounded-[3rem] overflow-hidden" style={{ width: '370px', height: '844px' }}>
-                        <div className="w-full h-full overflow-y-auto overflow-x-hidden" style={{ width: '370px', height: '844px' }}>
+                      <div className="relative bg-background rounded-[3rem] overflow-hidden aspect-[390/844]">
+                        <div className="w-full h-full overflow-y-auto overflow-x-hidden">
                           <div className="w-full h-full max-w-full">
                             <TreeBitesMockup />
                           </div>
@@ -64,7 +64,7 @@ const AppDemo = () => {
                 </div>
 
                 {/* Right - Features List */}
-                <div className="space-y-6 animate-fade-in-up" style={{ animationDelay: "0.3s" }}>
+                <div className="space-y-6 animate-fade-in-up text-center md:text-left mx-auto md:mx-0 max-w-lg" style={{ animationDelay: "0.3s" }}>
                   <div className="space-y-4">
                     {features.map((feature) => (
                       <div key={feature.title} className="flex items-start gap-4">

@@ -113,7 +113,7 @@ const Hero = () => {
 
       {/* Scroll indicator */}
       <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 pointer-events-none"
+        className="absolute inset-x-0 bottom-6 flex justify-center px-4 z-20 pointer-events-none"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1, duration: 0.6 }}
@@ -123,7 +123,7 @@ const Hero = () => {
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
           className="flex flex-col items-center gap-2"
         >
-          <span className="text-sm text-muted-foreground">Scroll to explore</span>
+          <span className="text-sm text-muted-foreground text-center">Scroll to explore</span>
           <ArrowRight className="h-5 w-5 text-muted-foreground rotate-90" />
         </motion.div>
       </motion.div>
